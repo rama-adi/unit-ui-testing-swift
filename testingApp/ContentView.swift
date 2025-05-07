@@ -14,7 +14,10 @@ struct ContentView: View {
     var body: some View {
         TabView {
             Tab("All Recipes", systemImage: "list.bullet") {
-                RecipeListView(recipeService: recipeService)
+                RecipeListView(
+                    recipeService: recipeService,
+                    storageService: storageService
+                )
             }
             
             Tab("Favorites", systemImage: "heart") {

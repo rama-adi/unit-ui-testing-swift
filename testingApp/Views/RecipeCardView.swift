@@ -80,11 +80,5 @@ struct RecipeCardView: View {
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 2)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.04), radius: 2, x: 0, y: 1)
-        )
-        .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
     }
 }

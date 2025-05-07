@@ -10,9 +10,13 @@ import SwiftUI
 struct RecipeListView: View {
     @State var viewModel: RecipeListViewModel
     
+    var storageService: RecipeStorageService
+    
     init(
-        recipeService: RecipeService
+        recipeService: RecipeService,
+        storageService: RecipeStorageService
     ) {
+        self.storageService = storageService
         _viewModel = State(wrappedValue: RecipeListViewModel(recipeService: recipeService)
         )
     }
@@ -37,7 +41,10 @@ struct RecipeListView: View {
                 } else {
                     List {
                         ForEach(viewModel.recipes) { recipe in
-                            NavigationLink(destination: Text("Recipe Detail View")) {
+                            NavigationLink(destination: RecipeDetailView(
+                                storageService: storageService,
+                                recipe: recipe)
+                            ) {
                                 RecipeCardView(recipe: recipe)
                             }
                         }
@@ -55,10 +62,15 @@ struct RecipeListView: View {
 
 
 #Preview("Dummy recipe list") {
-    RecipeListView(recipeService: FakeRecipeService())
+    RecipeListView(
+        recipeService: FakeRecipeService(),
+        storageService: LiveRecipeStorageService())
 }
 
 // Example on adding more preview case
 #Preview("Live recipe list") {
-    RecipeListView(recipeService: LiveRecipeService())
+    RecipeListView(
+        recipeService: LiveRecipeService(),
+        storageService: LiveRecipeStorageService()
+    )
 }

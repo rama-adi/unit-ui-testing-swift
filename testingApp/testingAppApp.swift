@@ -10,14 +10,12 @@ import SwiftUI
 @main
 struct testingAppApp: App {
     var body: some Scene {
-        // Anything here must use live implementations
-        // Since this is the main entry point of the app
-        // For preview, anything inside #Preview must use
-        // fake implementations
         WindowGroup {
+            // Use fake implementations if running UI tests, otherwise use live implementations
+            let isUITesting = ProcessInfo.processInfo.environment["IS_UITESTING"] == "1"
             ContentView(
-                recipeService: LiveRecipeService(),
-                storageService: LiveRecipeStorageService()
+                recipeService: isUITesting ? FakeRecipeService() : LiveRecipeService(),
+                storageService: isUITesting ? LiveRecipeStorageService() : LiveRecipeStorageService()
             )
         }
     }

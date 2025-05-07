@@ -10,7 +10,10 @@ import SwiftUI
 struct FavoriteRecipeView: View {
     @State var viewModel: FavoriteRecipeViewModel
     
+    let storageService: RecipeStorageService
+    
     init(storageService: RecipeStorageService) {
+        self.storageService = storageService
         _viewModel = State(initialValue: FavoriteRecipeViewModel(storageService: storageService)
         )
     }
@@ -35,7 +38,9 @@ struct FavoriteRecipeView: View {
                 } else {
                     List {
                         ForEach(viewModel.favoriteRecipes) { recipe in
-                            NavigationLink(destination: Text("Recipe Detail View")) {
+                            NavigationLink(destination:
+                                            RecipeDetailView(storageService: storageService, recipe: recipe)
+                            ) {
                                 RecipeCardView(recipe: recipe)
                             }
                         }
