@@ -64,8 +64,8 @@ struct FavoriteRecipeView: View {
     }
 }
 
-#Preview {
+#Preview("Example prefilled") {
     FavoriteRecipeView(
-        storageService: LiveRecipeStorageService()
+        storageService: PrefilledRecipeStorageService(randomized: true)
     )
 }
