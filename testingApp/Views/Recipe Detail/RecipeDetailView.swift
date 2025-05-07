@@ -10,7 +10,7 @@ import SwiftUI
 struct RecipeDetailView: View {
     @State var viewModel: RecipeDetailViewModel
     let recipe: Recipe
-    
+
     init(
         storageService: RecipeStorageService,
         recipe: Recipe
@@ -20,30 +20,63 @@ struct RecipeDetailView: View {
             storageService: storageService, recipe: recipe
         ))
     }
+
     var body: some View {
         NavigationStack {
             List {
-                // Recipe Image
+                // Recipe Image with caching using LiveRecipeService's imageCache
                 Section {
-                    AsyncImage(url: URL(string: recipe.image)) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } placeholder: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.gray.opacity(0.15))
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray.opacity(0.4))
-                                .font(.system(size: 40))
+                    AsyncImage(
+                        url: URL(string: recipe.image),
+                        transaction: Transaction(animation: .default)
+                    ) { phase in
+                        switch phase {
+                        case .empty:
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.gray.opacity(0.15))
+                                Image(systemName: "photo")
+                                    .foregroundColor(.gray.opacity(0.4))
+                                    .font(.system(size: 40))
+                            }
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        case .failure(_):
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.gray.opacity(0.15))
+                                Image(systemName: "photo")
+                                    .foregroundColor(.gray.opacity(0.4))
+                                    .font(.system(size: 40))
+                            }
+                        @unknown default:
+                            EmptyView()
                         }
                     }
                     .frame(height: 240)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
                     .listRowInsets(EdgeInsets())
+                    .onAppear {
+                        // Preload/caching logic for image using LiveRecipeService's imageCache
+                        guard let url = URL(string: recipe.image) else { return }
+                        let request = URLRequest(url: url)
+                        // Check if image is already cached
+                        if URLCache.imageCache.cachedResponse(for: request) == nil {
+                            // If not cached, fetch and cache it
+                            let task = URLSession.shared.dataTask(with: request) { data, response, _ in
+                                if let data = data, let response = response {
+                                    let cachedResponse = CachedURLResponse(response: response, data: data)
+                                    URLCache.imageCache.storeCachedResponse(cachedResponse, for: request)
+                                }
+                            }
+                            task.resume()
+                        }
+                    }
                 }
-                
+
                 // Quick Info
                 Section {
                     Label("\(recipe.prepTimeMinutes + recipe.cookTimeMinutes) min", systemImage: "clock")
@@ -51,8 +84,7 @@ struct RecipeDetailView: View {
                     Label(recipe.difficulty.rawValue.capitalized, systemImage: "flame")
                     Label("\(recipe.caloriesPerServing) cal", systemImage: "bolt.heart")
                 }
-                
-                
+
                 // Ingredients
                 Section(header: Text("Ingredients").font(.headline)) {
                     ForEach(recipe.ingredients, id: \.self) { ingredient in
@@ -67,7 +99,7 @@ struct RecipeDetailView: View {
                         }
                     }
                 }
-                
+
                 // Instructions
                 Section(header: Text("Instructions").font(.headline)) {
                     ForEach(Array(recipe.instructions.enumerated()), id: \.offset) { idx, step in
@@ -82,7 +114,6 @@ struct RecipeDetailView: View {
                                 .foregroundColor(.primary)
                         }
                     }
-                    
                 }
             }
             .listStyle(.insetGrouped)
