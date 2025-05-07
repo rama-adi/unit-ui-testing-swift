@@ -8,17 +8,28 @@
 import SwiftUI
 
 struct ContentView: View {
+    var recipeService: RecipeService
+    var storageService: RecipeStorageService
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            Tab("All Recipes", systemImage: "list.bullet") {
+                RecipeListView(recipeService: recipeService)
+            }
+            
+            Tab("Favorites", systemImage: "heart") {
+                FavoriteRecipeView(storageService: storageService)
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    // Example providing fake implementations so that
+    // Previews run without needing to fetch data from the internet
+    // or store data to disk
+    ContentView(
+        recipeService: FakeRecipeService(),
+        storageService: LiveRecipeStorageService()
+    )
 }
