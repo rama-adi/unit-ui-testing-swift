@@ -1,29 +1,6 @@
 #  Test case checklist
 To get maximum score for this assignment, follow the checklist below. Each requirement must be implemented exactly as specified.
 
-## Dependency injection
-- [ ] Create a `FakeRecipeStorageService` that conforms to `RecipeStorageService` protocol
-  - The class must be named exactly `FakeRecipeStorageService` and implement all methods in the protocol
-  - Use `FakeJSONMemoryStore.shared` as your backend storage mechanism (see `FakeJSONMemoryStore.swift`)
-  - For `saveFavoriteRecipe` method: encode the recipe and store it in the memory store using an appropriate key
-  - For `fetchFavoriteRecipes` method: retrieve all favorites from the memory store as an array
-  - For `deleteFavoriteRecipe` method: remove the specific recipe from the memory store
-  - Your implementation must have zero disk access or network calls
-- [ ] Ensure proper dependency injection in all view models:
-  - `RecipeListViewModel(recipeService: RecipeService)` - service must be passed through constructor
-  - `RecipeDetailViewModel(storageService: RecipeStorageService, recipe: Recipe)` - both parameters must be passed through constructor  
-  - `FavoriteRecipeViewModel(storageService: RecipeStorageService)` - service must be passed through constructor
-  - Verify that no concrete implementations (like `LiveRecipeService`) are directly referenced inside the view models
-- [ ] Create test-specific implementations:
-  - Create a `ThrowingRecipeService` that conforms to `RecipeService` but always throws an error
-  - Create an `EmptyRecipeService` that conforms to `RecipeService` but returns an empty list of recipes
-- [ ] Setup proper preview configurations:
-  - Update all `#Preview` code to use fake implementations (`FakeRecipeService` and `FakeRecipeStorageService`)
-  - Add multiple preview cases using `#Preview(...)` with descriptive names for different states:
-    - Empty state preview: use `EmptyRecipeService` to show UI when no recipes exist
-    - Error state preview: use `ThrowingRecipeService` to simulate error conditions in the UI
-    - Loaded state preview: use `FakeRecipeService` with sample data
-
 ## Unit test
 - [ ] Create unit tests for `RecipeListViewModel`
   - Test `fetchRecipes()` method with a working fake service that returns test recipes

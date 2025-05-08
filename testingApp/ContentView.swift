@@ -33,6 +33,6 @@ struct ContentView: View {
     // or store data to disk
     ContentView(
         recipeService: FakeRecipeService(),
-        storageService: LiveRecipeStorageService()
+        storageService: FakeRecipeStorageService()
     )
 }

@@ -64,7 +64,7 @@ struct RecipeListView: View {
 #Preview("Dummy recipe list") {
     RecipeListView(
         recipeService: FakeRecipeService(),
-        storageService: LiveRecipeStorageService())
+        storageService: FakeRecipeStorageService())
 }
 
 // Example on adding more preview case

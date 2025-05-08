@@ -148,7 +148,7 @@ struct RecipeDetailView: View {
 
 #Preview {
     RecipeDetailView(
-        storageService: LiveRecipeStorageService(),
+        storageService: FakeRecipeStorageService(),
         recipe: Recipe(
             id: 1,
             name: "Spaghetti Carbonara",
